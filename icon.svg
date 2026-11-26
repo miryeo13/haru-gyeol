@@ -1,9 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 150 150">
-  <rect width="150" height="150" rx="34" fill="#3b4ec8"/>
-  <rect x="34" y="40" width="82" height="76" rx="12" fill="#ffffff"/>
-  <rect x="34" y="40" width="82" height="20" rx="12" fill="#c9d0fa"/>
-  <rect x="34" y="52" width="82" height="8" fill="#c9d0fa"/>
-  <rect x="50" y="30" width="7" height="18" rx="3.5" fill="#ffffff"/>
-  <rect x="93" y="30" width="7" height="18" rx="3.5" fill="#ffffff"/>
-  <path d="M54 90 L69 104 L97 76" fill="none" stroke="#3b4ec8" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect width="150" height="150" rx="34" fill="#7635c5"/>
+  <text x="75" y="92" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="50" font-weight="800" letter-spacing="-2" text-anchor="middle" fill="#ffffff">MOA</text>
+  <circle cx="118" cy="38" r="9" fill="#f9a81b"/>
 </svg>

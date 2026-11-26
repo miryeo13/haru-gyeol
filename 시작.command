@@ -1,5 +1,5 @@
 #!/bin/bash
-# 하루결 시작 버튼: 더블클릭하면 서버가 켜지고 브라우저가 열려요.
+# MOA 시작 버튼: 더블클릭하면 서버가 켜지고 브라우저가 열려요.
 # 끄려면 이 창에서 Ctrl+C 를 누르거나 창을 닫으세요.
 
 PORT=5001                        # 포트 번호를 바꾸고 싶으면 여기 숫자를 수정
@@ -13,7 +13,7 @@ if lsof -nP -iTCP:$PORT -sTCP:LISTEN >/dev/null 2>&1; then
   exit 0
 fi
 
-echo "하루결을 시작합니다...  주소: http://localhost:$PORT"
+echo "MOA를 시작합니다...  주소: http://localhost:$PORT"
 echo "(끄려면 이 창에서 Ctrl+C)"
 ( sleep 1; open "http://localhost:$PORT" ) &
 ruby -E UTF-8:UTF-8 -run -e httpd . -p $PORT
