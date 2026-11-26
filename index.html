@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>하루결</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== 색상·글꼴은 여기(:root)에서 한 번에 바꿀 수 있어요 ===== */
+:root{
+  --bg:#f4f5f9;          /* 연한 회청색 배경 */
+  --card:#ffffff;        /* 카드 배경 */
+  --ink:#1e2433;         /* 본문 글자색 */
+  --muted:#7b8294;       /* 흐린 글자색 */
+  --line:#e6e9f0;        /* 테두리 */
+  --accent:#3b4ec8;      /* 남색(인디고) 포인트 */
+  --accent-soft:#eceffd;
+  --danger:#e0483e;
+  --c1:#3b4ec8; --c2:#f08a3c; --c3:#2fb383; --c4:#a86be0; /* 일정 4색 */
+  --shadow:0 2px 10px rgba(30,36,51,.06);
+  --font-title:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo',sans-serif;
+  --font-body:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.55}
+h1,h2,h3{font-family:var(--font-title);margin:0}
+button{font-family:inherit;cursor:pointer}
+header{background:var(--accent);color:#fff;padding:14px 20px 0}
+header .top{max-width:1000px;margin:0 auto}
+header h1{font-size:1.5rem}
+header small{opacity:.8}
+nav{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
+nav button{background:transparent;border:0;color:#cdd7ee;padding:10px 18px;border-radius:8px 8px 0 0;font-size:1rem}
+nav button.on{background:var(--bg);color:var(--accent);font-weight:700}
+main{max-width:1000px;margin:0 auto;padding:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.card h3{font-size:1.05rem;margin-bottom:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.stat{text-align:center}
+.stat b{display:block;font-family:var(--font-title);font-size:2rem;color:var(--accent)}
+.stat span{color:var(--muted);font-size:.9rem}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cal-wrap{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+input,select,textarea{font-family:inherit;font-size:1rem;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{width:100%;min-height:120px;resize:vertical}
+.btn{background:var(--accent);color:#fff;border:0;padding:8px 16px;border-radius:8px;font-size:.95rem}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn.sm{padding:4px 10px;font-size:.85rem}
+.btn.del{background:transparent;color:var(--danger);border:1px solid var(--danger)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.row .grow{flex:1;min-width:140px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;font-size:.88rem}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.memos{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.memo{margin:0;display:flex;flex-direction:column;gap:6px}
+.memo h3{font-size:1rem}
+.memo p{margin:0;color:#4a4753;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.tag{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:0 8px;font-size:.78rem}
+.meta{color:var(--muted);font-size:.8rem}
+.todo{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.todo:last-child{border:0}
+.todo.done .tt{text-decoration:line-through;color:var(--muted)}
+.todo .tt{flex:1}
+.pri{font-size:.75rem;border-radius:6px;padding:0 6px;color:#fff}
+.pri.h{background:var(--danger)} .pri.m{background:#c08a1f} .pri.l{background:#7a8a7a}
+.dd{font-size:.8rem;color:var(--muted)} .dd.over{color:var(--danger);font-weight:700}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .dow{text-align:center;color:var(--muted);font-size:.8rem}
+.day{aspect-ratio:1;border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;font-size:.9rem}
+.day.empty{border:0;background:transparent}
+.day.today{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);font-weight:700}
+.day.sel{background:var(--accent);color:#fff}
+.dots{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:auto}
+.dot{width:6px;height:6px;border-radius:50%}
+.dot.dl{border-radius:2px;background:var(--danger)}
+.day.sel .dot{box-shadow:0 0 0 1.5px #fff}
+.item{display:flex;align-items:center;gap:8px;padding:4px 0}
+.item .sw{width:10px;height:10px;border-radius:50%;flex:none}
+.item .grow{flex:1}
+.empty-msg{color:var(--muted);font-size:.9rem;padding:4px 0}
+.colors label{display:inline-flex;align-items:center;gap:2px;cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal.open{display:flex}
+.modal .box{background:var(--card);border-radius:12px;padding:20px;width:100%;max-width:480px}
+.modal input.t{width:100%;margin-bottom:10px}
+footer{text-align:center;padding:10px 20px 40px}
+/* ===== 디자인 다듬기 (위의 기본 스타일을 덮어씀) ===== */
+h1,h2,h3{font-weight:700;letter-spacing:-.02em}
+body{letter-spacing:-.01em}
+header{background:var(--card);color:var(--ink);border-bottom:1px solid var(--line);padding:16px 20px;position:sticky;top:0;z-index:5}
+header .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:1.4rem;color:var(--accent)}
+header small{color:var(--muted);font-size:.8rem;font-weight:400;margin-left:6px}
+nav{margin:0;gap:6px}
+nav button{color:var(--muted);border-radius:99px;padding:8px 18px;font-size:.95rem;font-weight:500;transition:.15s}
+nav button{white-space:nowrap}
+nav button:hover{background:var(--bg)}
+@media(max-width:700px){nav{width:100%;justify-content:space-between}nav button{flex:1;padding:8px 6px}}
+nav button.on{background:var(--accent);color:#fff;font-weight:700}
+main{padding:28px 20px}
+.card{border:0;border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.card h3{font-size:1rem;color:var(--ink)}
+.stat{padding:22px 10px}
+.stat b{font-weight:700;font-size:2.2rem}
+.stat span{font-weight:500}
+input,select,textarea{border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:10px 12px;transition:.15s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-soft)}
+input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;height:18px;padding:0}
+.btn{border-radius:10px;font-weight:500;padding:10px 18px;transition:.15s}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{border:1px solid var(--line);color:var(--ink);background:#fff}
+.btn.ghost:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);filter:none}
+.btn.del{border:0;background:#fdecea;color:var(--danger)}
+.btn.sm{padding:5px 12px;border-radius:8px}
+.chip{background:#fff;border-radius:99px;padding:6px 14px;transition:.15s}
+.chip:hover{border-color:var(--accent)}
+.memo{transition:.15s}
+.memo:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(30,36,51,.1)}
+.memo h3{font-size:1.05rem}
+.memo p{color:#555d70}
+.tag{border-radius:99px;padding:2px 10px;font-weight:500}
+.todo{padding:12px 0}
+.pri{border-radius:99px;padding:1px 10px}
+.pri.h{background:var(--danger)} .pri.m{background:#f0a23c} .pri.l{background:#9aa3b5}
+.bar{height:8px;background:var(--bg)}
+.bar i{background:linear-gradient(90deg,var(--accent),#6b7bf0);border-radius:99px}
+.day{border:0;background:var(--bg);border-radius:12px;transition:.15s}
+.day:hover{background:var(--accent-soft)}
+.day.empty{background:transparent}
+.day.today{box-shadow:inset 0 0 0 2px var(--accent);color:var(--accent)}
+.day.sel{background:var(--accent);color:#fff}
+.day.sel.today{color:#fff}
+.modal{backdrop-filter:blur(3px);background:rgba(30,36,51,.35)}
+.modal .box{border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+footer .btn{font-size:.8rem}
+@media(max-width:700px){
+  .grid3{gap:8px} .stat b{font-size:1.5rem}
+  .cols,.cal-wrap{grid-template-columns:1fr}
+  nav button{padding:8px 12px;flex:1}
+}
+</style>
+</head>
+<body>
+<header><div class="top">
+  <h1>하루결 <small>메모 · 할 일 · 캘린더</small></h1>
+  <nav id="nav"></nav>
+</div></header>
+<main id="view"></main>
+<footer><button class="btn ghost sm" onclick="resetData()">예시 데이터로 초기화</button></footer>
+
+<div class="modal" id="modal"><div class="box">
+  <h3 id="mTitle">메모</h3><br>
+  <input class="t" id="mT" placeholder="제목" maxlength="60">
+  <textarea id="mC" placeholder="내용"></textarea>
+  <div class="row" style="margin-top:10px">
+    <select id="mTag"></select>
+    <label><input type="checkbox" id="mPin"> 📌 상단 고정</label>
+  </div>
+  <div class="row" style="justify-content:flex-end">
+    <button class="btn ghost" onclick="closeModal()">취소</button>
+    <button class="btn" onclick="saveMemo()">저장</button>
+  </div>
+</div></div>
+
+<script>
+/* ============ 1. 데이터 저장 (localStorage) ============ */
+const TAGS=['업무','공부','아이디어','기타'];
+const COLORS=['var(--c1)','var(--c2)','var(--c3)','var(--c4)'];
+const KEY={m:'hg_memos',t:'hg_todos',e:'hg_events'};
+let memos=[],todos=[],events=[];
+
+function pad(n){return String(n).padStart(2,'0')}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return ymd(d)}
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function load(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+function save(){try{
+  localStorage.setItem(KEY.m,JSON.stringify(memos));
+  localStorage.setItem(KEY.t,JSON.stringify(todos));
+  localStorage.setItem(KEY.e,JSON.stringify(events));
+}catch(e){}}
+
+function sample(){
+  const now=Date.now();
+  memos=[
+    {id:uid(),title:'하루결 소개',content:'메모, 할 일, 캘린더를 한 화면에서 관리하는 웹 메모장입니다.\n자유롭게 써 보고 새로고침해도 남아 있는지 확인해 보세요.',tag:'기타',pinned:true,created:now},
+    {id:uid(),title:'면접 준비 체크',content:'1분 자기소개 다듬기\n지원 회사 서비스 써 보기',tag:'업무',pinned:false,created:now-3600e3},
+    {id:uid(),title:'스터디 정리',content:'오늘 배운 내용: 웹페이지는 HTML, CSS, JS로 만든다.',tag:'공부',pinned:false,created:now-86400e3},
+    {id:uid(),title:'앱 아이디어',content:'하루 한 줄 회고 앱',tag:'아이디어',pinned:false,created:now-2*86400e3}
+  ];
+  todos=[
+    {id:uid(),text:'포트폴리오 문장 다듬기',due:addDays(0),pri:'h',done:false},
+    {id:uid(),text:'스터디 자료 읽기',due:addDays(2),pri:'m',done:false},
+    {id:uid(),text:'이력서 파일 정리',due:addDays(-1),pri:'m',done:false},
+    {id:uid(),text:'책상 정리',due:'',pri:'l',done:true}
+  ];
+  events=[
+    {id:uid(),title:'부트캠프 수업',date:addDays(0),color:0},
+    {id:uid(),title:'스터디 모임',date:addDays(3),color:2},
+    {id:uid(),title:'기업 설명회',date:addDays(7),color:1}
+  ];
+  save();
+}
+function init(){
+  const m=load(KEY.m),t=load(KEY.t),e=load(KEY.e);
+  if(m&&t&&e){memos=m;todos=t;events=e}else sample();
+}
+function resetData(){
+  if(confirm('모든 데이터가 예시 데이터로 바뀝니다. 계속할까요?')){sample();render()}
+}
+
+/* ============ 2. 화면 상태·이동 ============ */
+let tab='home',memoQ='',memoTag='전체',todoFilter='전체';
+let calY=new Date().getFullYear(),calM=new Date().getMonth(),selDate=ymd(new Date());
+let editId=null;
+const TABS=[['home','홈'],['memo','메모'],['todo','할 일'],['cal','캘린더']];
+
+function go(t){tab=t;render()}
+function render(){
+  document.getElementById('nav').innerHTML=TABS.map(([k,l])=>
+    `<button class="${k===tab?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+  const v=document.getElementById('view');
+  v.innerHTML={home:viewHome,memo:viewMemo,todo:viewTodo,cal:viewCal}[tab]();
+}
+
+/* ============ 3. 공통 조각 ============ */
+function ddayText(due){
+  if(!due)return '';
+  const a=new Date(due+'T00:00:00'),b=new Date(ymd(new Date())+'T00:00:00');
+  const diff=Math.round((a-b)/86400e3);
+  if(diff<0)return `<span class="dd over">기한 지남 (${-diff}일)</span>`;
+  return `<span class="dd">${diff===0?'D-day':'D-'+diff} · ${due}</span>`;
+}
+function todoRow(t,withDel=true){
+  return `<div class="todo ${t.done?'done':''}">
+    <input type="checkbox" aria-label="완료" ${t.done?'checked':''} onchange="toggleTodo('${t.id}')">
+    <span class="tt">${esc(t.text)}</span>
+    <span class="pri ${t.pri}">${{h:'높음',m:'보통',l:'낮음'}[t.pri]}</span>
+    ${ddayText(t.due)}
+    ${withDel?`<button class="btn del sm" aria-label="삭제" onclick="delTodo('${t.id}')">삭제</button>`:''}
+  </div>`;
+}
+function progress(){
+  const n=todos.length,d=todos.filter(t=>t.done).length;
+  return `<div>${n}개 중 ${d}개 완료</div><div class="bar"><i style="width:${n?d/n*100:0}%"></i></div>`;
+}
+function memoCard(m){
+  return `<div class="card memo">
+    <div class="row" style="margin:0;justify-content:space-between">
+      <span class="tag">${esc(m.tag)}</span>
+      <button class="chip" aria-label="고정" onclick="pinMemo('${m.id}')">${m.pinned?'📌':'📍'}</button>
+    </div>
+    <h3>${esc(m.title||'(제목 없음)')}</h3>
+    <p>${esc(m.content)}</p>
+    <div class="meta">${ymd(new Date(m.created))}</div>
+    <div class="row" style="margin:0">
+      <button class="btn ghost sm" onclick="openModal('${m.id}')">수정</button>
+      <button class="btn del sm" onclick="delMemo('${m.id}')">삭제</button>
+    </div>
+  </div>`;
+}
+function eventsOn(d){return events.filter(e=>e.date===d)}
+function todosOn(d){return todos.filter(t=>t.due===d)}
+function memosOn(d){return memos.filter(m=>ymd(new Date(m.created))===d)}
+
+/* ============ 4. 홈 ============ */
+function viewHome(){
+  const today=ymd(new Date()),d=new Date();
+  const ym=today.slice(0,7);
+  const week=['일','월','화','수','목','금','토'][d.getDay()];
+  const recent=[...memos].sort((a,b)=>b.created-a.created).slice(0,3);
+  const te=eventsOn(today),tt=todosOn(today);
+  return `
+  <h2 style="margin-bottom:14px">${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${week})</h2>
+  <div class="grid3">
+    <div class="card stat" style="margin:0"><b>${memos.length}</b><span>전체 메모</span></div>
+    <div class="card stat" style="margin:0"><b>${todos.filter(t=>!t.done).length}</b><span>남은 할 일</span></div>
+    <div class="card stat" style="margin:0"><b>${events.filter(e=>e.date.startsWith(ym)).length}</b><span>이번 달 일정</span></div>
+  </div>
+  <div class="card"><h3>전체 진행률</h3>${progress()}</div>
+  <div class="cols">
+    <div class="card"><h3>오늘의 일정</h3>${te.length?te.map(e=>`<div class="item"><span class="sw" style="background:${COLORS[e.color]}"></span>${esc(e.title)}</div>`).join(''):'<div class="empty-msg">오늘 일정이 없어요.</div>'}</div>
+    <div class="card"><h3>오늘 마감 할 일</h3>${tt.length?tt.map(t=>todoRow(t,false)).join(''):'<div class="empty-msg">오늘 마감인 할 일이 없어요.</div>'}</div>
+  </div>
+  <div class="card"><h3>최근 메모</h3>${recent.length?`<div class="memos">${recent.map(memoCard).join('')}</div>`:'<div class="empty-msg">메모가 없어요.</div>'}</div>`;
+}
+
+/* ============ 5. 메모 ============ */
+function viewMemo(){
+  let list=memos.filter(m=>(memoTag==='전체'||m.tag===memoTag)&&
+    (!memoQ||(m.title+' '+m.content).toLowerCase().includes(memoQ.toLowerCase())));
+  list.sort((a,b)=>(b.pinned-a.pinned)||(b.created-a.created));
+  return `
+  <div class="row">
+    <input class="grow" id="q" placeholder="제목·내용 검색" value="${esc(memoQ)}" oninput="memoQ=this.value;renderKeep('q')">
+    <button class="btn" onclick="openModal()">+ 새 메모</button>
+  </div>
+  <div class="row">${['전체',...TAGS].map(t=>`<button class="chip ${t===memoTag?'on':''}" onclick="memoTag='${t}';render()">${t}</button>`).join('')}</div>
+  ${list.length?`<div class="memos">${list.map(memoCard).join('')}</div>`:'<div class="card empty-msg">보여줄 메모가 없어요.</div>'}`;
+}
+/* 검색창에 글자를 칠 때 포커스가 사라지지 않게 */
+function renderKeep(id){
+  render();
+  const el=document.getElementById(id);
+  if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}
+}
+function openModal(id=null){
+  editId=id;
+  const m=memos.find(x=>x.id===id)||{title:'',content:'',tag:TAGS[0],pinned:false};
+  document.getElementById('mTitle').textContent=id?'메모 수정':'새 메모';
+  document.getElementById('mT').value=m.title;
+  document.getElementById('mC').value=m.content;
+  document.getElementById('mTag').innerHTML=TAGS.map(t=>`<option ${t===m.tag?'selected':''}>${t}</option>`).join('');
+  document.getElementById('mPin').checked=m.pinned;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function saveMemo(){
+  const title=document.getElementById('mT').value.trim(),content=document.getElementById('mC').value.trim();
+  if(!title&&!content){alert('제목이나 내용을 입력해 주세요.');return}
+  const data={title,content,tag:document.getElementById('mTag').value,pinned:document.getElementById('mPin').checked};
+  if(editId)Object.assign(memos.find(x=>x.id===editId),data);
+  else memos.push({id:uid(),created:Date.now(),...data});
+  save();closeModal();render();
+}
+function delMemo(id){if(confirm('이 메모를 삭제할까요? 되돌릴 수 없어요.')){memos=memos.filter(m=>m.id!==id);save();render()}}
+function pinMemo(id){const m=memos.find(x=>x.id===id);m.pinned=!m.pinned;save();render()}
+
+/* ============ 6. 할 일 ============ */
+function viewTodo(){
+  const list=todos.filter(t=>todoFilter==='전체'||(todoFilter==='진행 중'?!t.done:t.done));
+  return `
+  <div class="card"><h3>진행률</h3>${progress()}</div>
+  <div class="card">
+    <div class="row">
+      <input class="grow" id="tx" placeholder="할 일 입력" maxlength="80" onkeydown="if(event.key==='Enter')addTodo()">
+      <input type="date" id="td">
+      <select id="tp"><option value="h">높음</option><option value="m" selected>보통</option><option value="l">낮음</option></select>
+      <button class="btn" onclick="addTodo()">추가</button>
+    </div>
+    <div class="row">${['전체','진행 중','완료'].map(f=>`<button class="chip ${f===todoFilter?'on':''}" onclick="todoFilter='${f}';render()">${f}</button>`).join('')}</div>
+    ${list.length?list.map(t=>todoRow(t)).join(''):'<div class="empty-msg">할 일이 없어요.</div>'}
+  </div>`;
+}
+function addTodo(){
+  const text=document.getElementById('tx').value.trim();
+  if(!text){alert('할 일을 입력해 주세요.');return}
+  todos.push({id:uid(),text,due:document.getElementById('td').value,pri:document.getElementById('tp').value,done:false});
+  save();render();
+}
+function toggleTodo(id){const t=todos.find(x=>x.id===id);t.done=!t.done;save();render()}
+function delTodo(id){todos=todos.filter(t=>t.id!==id);save();render()}
+
+/* ============ 7. 캘린더 ============ */
+function viewCal(){
+  const first=new Date(calY,calM,1),days=new Date(calY,calM+1,0).getDate(),today=ymd(new Date());
+  let cells=['일','월','화','수','목','금','토'].map(d=>`<div class="dow">${d}</div>`).join('');
+  for(let i=0;i<first.getDay();i++)cells+='<div class="day empty"></div>';
+  for(let d=1;d<=days;d++){
+    const key=calY+'-'+pad(calM+1)+'-'+pad(d);
+    const dots=eventsOn(key).map(e=>`<i class="dot" style="background:${COLORS[e.color]}"></i>`).join('')
+      +todosOn(key).map(()=>'<i class="dot dl"></i>').join('');
+    cells+=`<button class="day ${key===today?'today':''} ${key===selDate?'sel':''}" onclick="selDate='${key}';render()">${d}<span class="dots">${dots}</span></button>`;
+  }
+  const ev=eventsOn(selDate),tds=todosOn(selDate),ms=memosOn(selDate);
+  return `<div class="cal-wrap">
+  <div class="card">
+    <div class="calhead">
+      <button class="btn ghost sm" onclick="moveMonth(-1)">◀ 이전</button>
+      <h3 style="margin:0">${calY}년 ${calM+1}월</h3>
+      <span><button class="btn ghost sm" onclick="goToday()">오늘</button>
+      <button class="btn ghost sm" onclick="moveMonth(1)">다음 ▶</button></span>
+    </div>
+    <div class="cal">${cells}</div>
+    <div class="meta" style="margin-top:8px">● 일정 &nbsp; <span style="color:var(--danger)">■</span> 할 일 마감</div>
+  </div>
+  <div class="card">
+    <h3>${selDate}</h3>
+    <div class="row">
+      <input class="grow" id="et" placeholder="일정 제목" maxlength="40" onkeydown="if(event.key==='Enter')addEvent()">
+      <button class="btn sm" onclick="addEvent()">일정 추가</button>
+    </div>
+    <div class="row colors">${COLORS.map((c,i)=>`<label><input type="radio" name="ec" value="${i}" ${i===0?'checked':''}><span class="sw" style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${c}"></span></label>`).join('')}</div>
+    <h3 style="font-size:.95rem">일정</h3>
+    ${ev.length?ev.map(e=>`<div class="item"><span class="sw" style="background:${COLORS[e.color]}"></span><span class="grow">${esc(e.title)}</span><button class="btn del sm" onclick="delEvent('${e.id}')">삭제</button></div>`).join(''):'<div class="empty-msg">일정 없음</div>'}
+    <h3 style="font-size:.95rem;margin-top:12px">마감 할 일</h3>
+    ${tds.length?tds.map(t=>todoRow(t,false)).join(''):'<div class="empty-msg">마감 할 일 없음</div>'}
+    <h3 style="font-size:.95rem;margin-top:12px">이날 쓴 메모</h3>
+    ${ms.length?ms.map(m=>`<div class="item"><span class="tag">${esc(m.tag)}</span><span class="grow">${esc(m.title||'(제목 없음)')}</span></div>`).join(''):'<div class="empty-msg">메모 없음</div>'}
+  </div></div>`;
+}
+function moveMonth(n){calM+=n;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}render()}
+function goToday(){const d=new Date();calY=d.getFullYear();calM=d.getMonth();selDate=ymd(d);render()}
+function addEvent(){
+  const title=document.getElementById('et').value.trim();
+  if(!title){alert('일정 제목을 입력해 주세요.');return}
+  events.push({id:uid(),title,date:selDate,color:+document.querySelector('input[name=ec]:checked').value});
+  save();render();
+}
+function delEvent(id){events=events.filter(e=>e.id!==id);save();render()}
+
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+init();render();
+</script>
+</body>
+</html>
